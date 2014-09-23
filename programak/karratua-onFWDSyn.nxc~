@@ -1,0 +1,20 @@
+
+task main() {
+int i;
+int fwd = 50;
+int rotate = 30;
+	for (i = 0; i < 4; i++) {
+		/* zuzen 1 m */	
+		
+		OnFwdSync(OUT_AC, fwd, 0);
+		Wait(6300);
+		/* Bira */
+		Off(OUT_A);
+		Off(OUT_C);
+		Wait(1000);
+		OnFwdSync(OUT_AC, rotate, 80);
+		Wait(1300);
+	}
+	Off(OUT_A);
+	Off(OUT_C);
+}

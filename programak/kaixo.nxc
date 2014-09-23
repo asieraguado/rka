@@ -1,0 +1,6 @@
+task main()
+{
+  TextOut(0, LCD_LINE1, "kaixo!");
+  TextOut(0, LCD_LINE2, "2013/14 ikasturteari");
+  Wait(2000);
+}
