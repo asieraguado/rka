@@ -1,0 +1,53 @@
+//Lap Time: 0:37
+
+#define ADDR 0x14
+#define ITXOIN_DENB 10
+#define MUGA 5
+#define LEFT 0
+#define RIGHT 1
+#define MIN(x, y) ((x < y) ? (x) : (y))
+#define SENSITIVITY 2
+#define SPEED 100
+
+
+#include "LSA-lib.nxc"
+
+int pow(float base, int exp) {
+	float ans = 1;
+	while(exp--) ans *= base;
+	return ans;
+}
+
+int range(int from, int to, int value) {
+	if (value < from) return from;
+	if (value > to)   return to;
+	return value;
+}
+
+task main() {
+	int balio, i;
+	const byte SensorPort  =  IN_1;
+
+	unsigned byte rawCalibrated[8];
+  	SetSensorLowspeed(SensorPort);
+	LSA_WakeUp(SensorPort, ADDR);
+	while(true) {
+	      for ( i=0; i < 8; i++)  rawCalibrated[i] = 0;
+	 
+	      if( LSA_ReadRaw_Calibrated (SensorPort, ADDR, rawCalibrated) ) {
+		int sidePower[2];
+		sidePower[LEFT] = 0;
+		sidePower[RIGHT] = 0;
+		int side = RIGHT;
+		for (i = 0; i < 8; ++i) {
+			if (rawCalibrated[i] < MUGA)  side = LEFT;
+			if (rawCalibrated[i] >= MUGA) sidePower[side]++;
+		}
+		int leftPower  = 2*pow(sidePower[LEFT], SENSITIVITY);
+		int rightPower = 2*pow(sidePower[RIGHT], SENSITIVITY);
+		OnFwd(OUT_A, range(-100, 100, SPEED + rightPower - leftPower ));
+		OnFwd(OUT_C, range(-100, 100, SPEED + leftPower  - rightPower));		
+	      }
+		Wait(ITXOIN_DENB);
+	}
+}

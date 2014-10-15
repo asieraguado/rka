@@ -1,0 +1,22 @@
+
+task main() {
+int i;
+int left = 30;
+int right = 30;
+int rotate = 29;
+	for (i = 0; i < 4; i++) {
+		/* zuzen 1 m */	
+		
+		OnFwdReg(OUT_A, right, OUT_REGMODE_SPEED);
+		OnFwdReg(OUT_C, left, OUT_REGMODE_SPEED);
+		Wait(6300);
+		/* Bira */
+		Off(OUT_A);
+		Off(OUT_C);
+		Wait(1000);
+		OnFwdReg(OUT_C, rotate, OUT_REGMODE_SPEED);
+		Wait(1200);
+	}
+	Off(OUT_A);
+	Off(OUT_C);
+}

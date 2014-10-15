@@ -1,0 +1,27 @@
+#define ARGIA S1
+#define ITXOIN_DENB 50
+#define MUGA 35
+
+task main() {
+	int balio;
+	int count = 0;
+	SetSensorType(ARGIA, SENSOR_TYPE_LIGHT_ACTIVE);
+	SetSensorMode(ARGIA, SENSOR_MODE_PERCENT);
+	ResetSensor(ARGIA);
+	while(true) {
+		balio = Sensor(ARGIA);
+		if (balio > MUGA) {
+			OnFwd(OUT_A, 40+count);
+			OnFwd(OUT_C, 30-count);
+			count++;
+			if (count > 60)
+				count = 60;
+		} else {
+			OnFwd(OUT_A, -30);
+			OnFwd(OUT_C, 30);
+			count = 0;
+		}
+
+		Wait(ITXOIN_DENB);
+	}
+}
