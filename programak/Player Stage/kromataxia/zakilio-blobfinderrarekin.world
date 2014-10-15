@@ -1,0 +1,59 @@
+include "pioneer.inc"
+include "map.inc"
+
+# simulazioa eteteko (GUI moduan) edo amaitzeko (headless moduan (-g)) denbora
+quit_time 3600 # 1 hour of simulated time
+
+paused 0
+
+# Konfiguratu interfaze grafikoaren leihoa
+window
+(
+  size [ 600.000 600.000 ] 
+  center [0 0] 
+  scale 45.0	
+  show_data 1              # 1=on 0=off
+)
+
+# Kargatu ingurunearen bitmap-a
+floorplan
+( 
+  name "cave"
+  size [12.000 12.000 0.80]
+  bitmap "norect.png"
+)
+
+
+define robota fancypioneer2dx
+(		  
+  blobfinder
+	 ( 
+	 colors_count 1 
+         colors [ "red"]
+	 alwayson 1
+	 image [80 60]
+  	 ) 
+)
+
+
+
+robota
+ (
+ pose [0.0 -2.0 0.0 90.000]
+ name "zakilio"
+
+ )
+
+
+define puck model
+(
+	size [ 0.2 0.2 0.4]
+	friction 0.05
+	mass 0.002
+)
+
+puck
+(
+	pose [3.0 3.0 0 90.000] 
+	color "red"	
+)
