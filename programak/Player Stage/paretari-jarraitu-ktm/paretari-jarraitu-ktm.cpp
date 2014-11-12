@@ -1,18 +1,17 @@
 // TODO (UNFINISHED PROGRAM)
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
 #include <libplayerc/playerc.h>
 #include <signal.h>
 #include <gsl/gsl_fit.h>
 #include <unistd.h>
 
-#define LASER_IZPI_KOP 90
-#define LASER_ANG 90.0
+#define LASER_IZPI_KOP 60
 
 #define KP 2
-#define THETA 2
+#define THETA 0
 
 int mainpid;
 playerc_client_t *bezeroa;
@@ -34,7 +33,7 @@ main(int argc, const char **argv)
   double c0, c1, cov00, cov01, cov11, batura;
   double x[LASER_IZPI_KOP], y[LASER_IZPI_KOP];
   double theta;
-  int j = 0;
+  int j = LASER_IZPI_KOP;
 
   //**********************************
   // set up signal handling
@@ -70,27 +69,28 @@ main(int argc, const char **argv)
 
       /* prozesatu laserraren irakurketak */
       for (int i = 0; i < LASER_IZPI_KOP; ++i) {
-	x[i] = -laserra->scan[i][0]*sin(laserra->scan[i][1]);
-	y[i] = laserra->scan[i][0]*cos(laserra->scan[i][1]);
+	x[i] = -laserra->scan[i][0] * sin(laserra->scan[i][1]);
+	y[i] =  laserra->scan[i][0] * cos(laserra->scan[i][1]);
       }
 
-      printf("X: %f Y: %f \n", x[89], y[89]);
+      printf("X: %f Y: %f \n", x[0], y[0]);
 
       /* regresio lineala: karratu txikienen metodoa */
        gsl_fit_linear (x, 1, y, 1, j, 
 		   &c0, &c1, &cov00, &cov01, &cov11, 
 		   &batura);
-      printf ("# Zuzenaren ekuazioa: Y = c0 + c1*X = %g + %g X\n", c0, c1);
+      printf ("# Zuzenaren ekuazioa: Y = c0 + c1*X = %f + %f X\n", c0, c1);
 
       /* Kalkulatu robota eta paretaren arteko angelua */
       
-      // theta = atan2();
+      theta = atan2(1, abs(c1));
+      if (c1 < 0) theta = -theta;
 
       printf("Angelua: %g\n", RTOD(theta));
 
       w = -(THETA - theta) * KP;
 
-      playerc_position2d_set_cmd_vel(robota, 0, 0, 0, 0);
+      playerc_position2d_set_cmd_vel(robota, 0.5, 0, -w, 0);
 
       // Hobekuntza: traslazio-abiadura abiadura angeluarraren alderantziz
       // proportzionala
