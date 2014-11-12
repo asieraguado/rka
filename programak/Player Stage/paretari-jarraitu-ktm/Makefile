@@ -1,4 +1,4 @@
-CC=gcc
+CC=g++
 
 CFLAGS=`pkg-config --cflags playerc` `pkg-config --cflags playercore` 
 LIBS =`pkg-config --libs playerc` -lm
@@ -7,7 +7,7 @@ TARGETS = paretari-jarraitu-ktm
 
 all: $(TARGETS)
 
-%: %.c
+%: %.cpp
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
 clean:
