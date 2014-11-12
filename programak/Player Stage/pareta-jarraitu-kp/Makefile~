@@ -1,0 +1,14 @@
+CC=gpp
+
+CFLAGS=`pkg-config --cflags playerc` `pkg-config --cflags playercore` 
+LIBS =`pkg-config --libs playerc` -lm
+
+TARGETS = pareta-jarraitu-kp
+
+all: $(TARGETS)
+
+%: %.cpp
+	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
+
+clean:
+	rm *.o *~ $(TARGETS)
