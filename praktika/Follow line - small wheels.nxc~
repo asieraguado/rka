@@ -1,0 +1,46 @@
+//Lap Time: 0:37
+
+#include "LSA-lib.nxc"
+#include "utils.nxc"
+#include "movement.nxc"
+
+int previous_color = OTHER;
+
+int read_colors() {
+	switch (SENSOR_2) {
+	case INPUT_BLUECOLOR:
+		return BLUE;
+		break;
+	case INPUT_REDCOLOR:
+		return RED;
+		break;
+	case INPUT_GREENCOLOR:
+		return GREEN;
+		break;
+	default:
+		return OTHER;
+	}
+}
+
+void set_sensors() {
+	SetSensorColorFull(RGB_PORT);
+	SetSensorLowspeed(LSA_PORT);
+	LSA_WakeUp(LSA_PORT, ADDR);
+}
+
+task main() {
+	int balio, i;
+
+	set_sensors();
+	while(true) {
+		int current_color = read_colors();
+		if (current_color != OTHER && current_color != previous_color) {
+			stop_movement();
+			Wait(1000);
+		}
+		previous_color = current_color;
+		fast_movement();
+		NumOut(0, LCD_LINE2, read_colors());
+		Wait(ITXOIN_DENB);
+	}
+}

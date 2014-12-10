@@ -1,0 +1,37 @@
+//
+#define LSA_PORT IN_1
+#define ADDR 0x14
+
+#define RGB_PORT S2
+#define RGB_SENSOR SENSOR_2
+#define RED 1
+#define GREEN 2
+#define BLUE 3
+#define OTHER 4
+
+#define US_PORT S3
+
+#define ITXOIN_DENB 10
+
+#define RIGHT_MOTOR OUT_A
+#define LEFT_MOTOR  OUT_C
+#define MUGA 5
+#define LEFT 0
+#define RIGHT 1
+#define MIN(x, y) ((x < y) ? (x) : (y))
+#define ABS(x) ((x < 0) ? (-x) : (x))
+#define SENSITIVITY 2
+#define SPEED 80
+
+int pow(float base, int exp) {
+	float ans = 1;
+	while(exp--) ans *= base;
+	return ans;
+}
+
+int range(int from, int to, int value) {
+	if (value < from) return from;
+	if (value > to)   return to;
+	return value;
+}
+

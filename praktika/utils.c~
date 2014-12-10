@@ -1,0 +1,9 @@
+#define ADDR 0x14
+#define ITXOIN_DENB 10
+#define MUGA 5
+#define LEFT 0
+#define RIGHT 1
+#define MIN(x, y) ((x < y) ? (x) : (y))
+#define SENSITIVITY 2
+#define SPEED 90
+

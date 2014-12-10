@@ -1,0 +1,57 @@
+//
+#include "LSA-lib.nxc"
+#include "utils.nxc"
+#include "movement.nxc"
+
+int previous_color = OTHER;
+
+int read_colors() {
+	switch (RGB_SENSOR) {
+	case INPUT_BLUECOLOR:
+		return BLUE;
+		break;
+	case INPUT_REDCOLOR:
+		return RED;
+		break;
+	case INPUT_GREENCOLOR:
+		return GREEN;
+		break;
+	default:
+		return OTHER;
+	}
+}
+
+void set_sensors() {
+	SetSensorColorFull(RGB_PORT);
+	SetSensorLowspeed(US_PORT);
+	SetSensorLowspeed(LSA_PORT);
+	LSA_WakeUp(LSA_PORT, ADDR);
+}
+
+task main() {
+	int balio, i;
+	float acc = 0;
+	int total = 0;
+
+	set_sensors();
+	while(true) {
+		int current_color = read_colors();
+		if (current_color != OTHER && current_color != previous_color) {
+			stop_movement();
+			Wait(1000);
+		} else if(SensorUS(US_PORT) < 20) {
+			stop_movement();
+		} else {
+			float temp = fast_movement();
+			if (temp > -150) {
+				total++;
+				acc += temp;
+			}
+		}
+
+		previous_color = current_color;		
+		NumOut(0, LCD_LINE2, acc/(float)total);
+		Wait(ITXOIN_DENB);
+		ClearScreen();
+	}
+}
