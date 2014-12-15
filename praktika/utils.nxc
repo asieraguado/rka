@@ -23,6 +23,14 @@
 #define SENSITIVITY 2
 #define SPEED 80
 
+#define RED_STATE 1
+#define BLUE_STATE 2
+#define GREEN_STATE 3
+#define GREEN_WAIT_STATE 4
+#define MOVE_STATE 5
+#define DANGER_STATE 6
+
+
 int pow(float base, int exp) {
 	float ans = 1;
 	while(exp--) ans *= base;
@@ -33,5 +41,30 @@ int range(int from, int to, int value) {
 	if (value < from) return from;
 	if (value > to)   return to;
 	return value;
+}
+
+int color = GREEN;
+int next_color() {
+	switch(color) {
+	case RED:	return BLUE;
+	case BLUE:	return GREEN;
+	case GREEN:	return RED;		
+	}
+}
+
+int advance_color() {
+	switch(color) {
+	case RED:	color = BLUE;  break;
+	case BLUE:	color = GREEN; break;
+	case GREEN:	color = RED;   break;
+	}
+}
+int get_color_state(int col) {
+	switch(col) {
+	case RED:	return RED_STATE;
+	case BLUE:	return BLUE_STATE;
+	case GREEN:	return GREEN_STATE;		
+	}
+
 }
 

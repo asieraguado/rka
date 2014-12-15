@@ -1,6 +1,6 @@
 //
 
-int prev_error;
+int count_e = 0;
 
 float fast_movement() {
 	unsigned byte rawCalibrated[8];
@@ -18,17 +18,14 @@ float fast_movement() {
 		}
 		int leftPower  = 2*pow(sidePower[LEFT], SENSITIVITY);
 		int rightPower = 2*pow(sidePower[RIGHT], SENSITIVITY);
-		int cur_error = ABS(sidePower[LEFT] - sidePower[RIGHT]);
-		float comb_error = cur_error*0.4 + prev_error*0.6;
-		prev_error = cur_error;
-		int turbo;
-		if (comb_error < 2) 		turbo = 20;
-		else if (comb_error < 2.5) 	turbo = 10;
-		else if (comb_error < 4) 	turbo = 5;
-		else				turbo = 0;
-		OnFwd(RIGHT_MOTOR, range(-100, 100, SPEED + rightPower - leftPower + turbo ));
-		OnFwd(LEFT_MOTOR, range(-100, 100, SPEED + leftPower  - rightPower + turbo ));
-		return (range(-100, 100, SPEED + rightPower - leftPower + turbo) + range(-100, 100, SPEED + leftPower  - rightPower+ turbo))/2.0;	
+		if (ABS(sidePower[LEFT] - sidePower[RIGHT]) < 2) 
+			count_e++;
+		else
+			count_e = 0;
+		int turbo = (count_e < 3) ? 0 : 20;
+		OnFwd(RIGHT_MOTOR, range(-100, 100, SPEED + rightPower - leftPower + turbo));
+		OnFwd(LEFT_MOTOR, range(-100, 100, SPEED + leftPower  - rightPower + turbo));
+		return (range(-100, 100, SPEED + rightPower - leftPower + turbo) + range(-100, 100, SPEED + leftPower  - rightPower + turbo))/2.0;	
 	} else {
 		return -10000.0;
 	}
