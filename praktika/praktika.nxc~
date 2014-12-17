@@ -41,7 +41,7 @@ task main() {
 			if (cur_color == next_color()) {				
 				advance_color();
 				state = get_color_state(cur_color);								 
-			} else if (SensorUS(US_PORT) < 15) {
+			} else if (SensorUS(US_PORT) < 15 && next_Color() == RED) {
 				state = DANGER_STATE;
 			}
 			break;
@@ -62,7 +62,7 @@ task main() {
 		case DANGER_STATE:
 			stop_movement();
 			PlaySound(SOUND_DOUBLE_BEEP);
-			OnFwd(OUT_B, -100);
+			//OnFwd(OUT_B, 100);
 			if (SensorUS(US_PORT) > 20)
 				state = MOVE_STATE;
 			break;
