@@ -2,33 +2,27 @@
 
 int count_e = 0;
 
-float fast_movement() {
+void fast_movement() {
 	unsigned byte rawCalibrated[8];
 	int i;
 	for ( i=0; i < 8; i++)  rawCalibrated[i] = 0;
 	 
 	if( LSA_ReadRaw_Calibrated (LSA_PORT, ADDR, rawCalibrated) ) {
-		int sidePower[2];
-		sidePower[LEFT] = 0;
-		sidePower[RIGHT] = 0;
+		int whiteCount[2];
+		whiteCount[LEFT] = 0;
+		whiteCount[RIGHT] = 0;
 		int side = RIGHT;
 		for (i = 0; i < 8; ++i) {
 			if (rawCalibrated[i] < MUGA)  side = LEFT;
-			if (rawCalibrated[i] >= MUGA) sidePower[side]++;
+			if (rawCalibrated[i] >= MUGA) whiteCount[side]++;
 		}
-		int leftPower  = 2*pow(sidePower[LEFT], SENSITIVITY);
-		int rightPower = 2*pow(sidePower[RIGHT], SENSITIVITY);
-		if (ABS(sidePower[LEFT] - sidePower[RIGHT]) < 2) 
-			count_e++;
-		else
-			count_e = 0;
-		int turbo = (count_e < 3) ? 0 : 20;
+		int leftPower  = 2*pow(whiteCount[LEFT], SENSITIVITY);
+		int rightPower = 2*pow(whiteCount[RIGHT], SENSITIVITY);
+		(ABS(whiteCount[LEFT] - whiteCount[RIGHT]) < 2) ? (count_e++) : (count_e = 0); 
+
+		int turbo = MIN(count_e*5, 20);
 		OnFwd(RIGHT_MOTOR, range(-100, 100, SPEED + rightPower - leftPower + turbo));
-		OnFwd(LEFT_MOTOR, range(-100, 100, SPEED + leftPower  - rightPower + turbo));
-		//return turbo;
-		return (range(-100, 100, SPEED + rightPower - leftPower + turbo) + range(-100, 100, SPEED + leftPower  - rightPower + turbo))/2.0;	
-	} else {
-		return -10000.0;
+		OnFwd(LEFT_MOTOR, range(-100, 100, SPEED + leftPower  - rightPower + turbo));	
 	}
 }
 

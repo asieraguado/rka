@@ -3,14 +3,13 @@
 #include "utils.nxc"
 #include "movement.nxc"
 
-int previous_color = OTHER;
 int state = MOVE_STATE;
 
 int read_colors() {
 	switch (RGB_SENSOR) {
-	case INPUT_BLUECOLOR:  return BLUE;  break;
-	case INPUT_REDCOLOR:   return RED;   break;
-	case INPUT_GREENCOLOR: return GREEN; break;
+	case INPUT_BLUECOLOR:  return BLUE;
+	case INPUT_REDCOLOR:   return RED;
+	case INPUT_GREENCOLOR: return GREEN;
 	default:	       return OTHER;
 	}
 }
@@ -24,24 +23,20 @@ void set_sensors() {
 
 task main() {
 	int balio, i;
-	float acc = 0;
-	int total = 0;
 
 	set_sensors();
-	while(true) {
+	while(true) {		
 		int cur_color = read_colors();
 		switch(state) {
 		case MOVE_STATE:
-			float temp = fast_movement();
-			if (temp > -150) {
-				total++;
-				acc += temp;
-			}
-			//fast_movement();
+			fast_movement();
+
 			if (cur_color == next_color()) {				
 				advance_color();
 				state = get_color_state(cur_color);								 
-			} else if (SensorUS(US_PORT) < 15 && next_color() == RED) {
+			} else if (SensorUS(US_PORT) < 20 && next_color() == RED) {
+				state = DANGER_STATE;
+			} else if (SensorUS(US_PORT) < 10 && next_color() != RED) {
 				state = DANGER_STATE;
 			}
 			break;
@@ -61,15 +56,11 @@ task main() {
 			break;
 		case DANGER_STATE:
 			stop_movement();
-			PlaySound(SOUND_DOUBLE_BEEP);
-			//OnFwd(OUT_B, 100);
-			if (SensorUS(US_PORT) > 20)
+			PlaySound(SOUND_DOUBLE_BEEP);			
+			if (SensorUS(US_PORT) > 35)
 				state = MOVE_STATE;
 			break;
 		}
-		
-		NumOut(0, LCD_LINE2, acc/total);
 		Wait(ITXOIN_DENB);
-		//ClearScreen();
 	}
 }

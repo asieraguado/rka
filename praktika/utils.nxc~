@@ -21,13 +21,14 @@
 #define MIN(x, y) ((x < y) ? (x) : (y))
 #define ABS(x) ((x < 0) ? (-x) : (x))
 #define SENSITIVITY 2
-#define SPEED 80
+#define SPEED 60
 
 #define RED_STATE 1
 #define BLUE_STATE 2
 #define GREEN_STATE 3
 #define GREEN_WAIT_STATE 4
 #define MOVE_STATE 5
+#define DANGER_STATE 6
 
 
 int pow(float base, int exp) {
